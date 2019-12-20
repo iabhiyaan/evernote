@@ -1,0 +1,50 @@
+deleteNote__Fn = async (note) => {
+		const { notes, selectedNoteIndex } = this.state;
+		const noteObjIndex = this.state.notes && this.state.notes.indexOf(note);
+		console.log(note, noteObjIndex);
+
+		const updatedNotes = this.state.notes.filter((n) => n.id !== note.id);
+		await this.setState({
+			notes: updatedNotes
+		});
+
+		if (notes.length === 1) {
+			if (selectedNoteIndex === 0 && noteObjIndex === 0) {
+				await this.setState({
+					selectedNote: null,
+					selectedNoteIndex: null
+				});
+			}
+		} else if (notes.length > 1) {
+			if (selectedNoteIndex > noteObjIndex) {
+				this.setState({
+					...this.state,
+					selectedNoteIndex: selectedNoteIndex - 1,
+					selectedNote: notes[selectedNoteIndex]
+				});
+			} else if (selectedNoteIndex === 0 && noteObjIndex === 0) {
+				this.setState({
+					selectedNoteIndex: selectedNoteIndex,
+					selectedNote: notes[selectedNoteIndex + 1]
+				});
+			} else if (selectedNoteIndex === noteObjIndex) {
+				this.setState({
+					selectedNoteIndex: selectedNoteIndex - 1,
+					selectedNote: notes[selectedNoteIndex - 1]
+				});
+			} else {
+				this.setState({
+					...this.state,
+					selectedNoteIndex: selectedNoteIndex,
+					selectedNote: notes[selectedNoteIndex]
+				});
+			}
+		} else {
+			await this.setState({
+				...this.state,
+				selectedNote: null,
+				selectedNoteIndex: null
+			});
+		}
+		db.collection("/notes").doc(note.id).delete();
+	};
